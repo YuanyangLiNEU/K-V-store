@@ -1,0 +1,53 @@
+An Implementation of Scalable Distributed Key-Value Store
+
+Usage:
+make clean
+make 
+./coordinator port
+./server serverPort coorPort
+./client coorPort
+
+
+Description:
+We use consistent hashing to support the scalability of our key-value store. "Consistent hashing is a special kind of hashing such that when a hash table is resized, only K / n keys need to be remapped on average, where K is the number of keys, and n is the number of slots." In our case, n is the number of servers. Maximum number of servers can be changed in util.h (MAX_SERVER). Details of consitent hashing can be found in http://michaelnielsen.org/blog/consistent-hashing/.
+
+Implementation:
+
+There are three parts:
+
+Coordinator:
+Coordinator receives requests from clients and it supports the following commands:
+1. "register", when a new server starts, it should register to the coordinator. After receving the register message, coordinator tries to find an empty position. The information of consistent hash ring is stored in nodes[MAX_SERVER](server.h). If the coordiantor successfully finds an empty position, it will return the position id and the port of its next server in clockwise direction to the request server. The request server need to extractor data which should be stored in it from its next server.
+
+2. "unregister", when a server leaves, it should unregister to the coordinator. Then the coordinator will free its position and return the port of next server to the request server. The request server need to insert all its data into the next server.
+
+3. "stat", coordinator will response with current status of consistent hashing ring. For example, MAX_SERVER is 4 and there are 2 servers online. The one is in position 0 and its port is 12100. The other one is in position 2 and its port is 12101. The coordinator will response:
+pos: 0, port: 12100
+pos: 2, port: 12101
+
+4. "get"/"set", coordinator will response with server port that clients need connect to. Taking example in #1, if hash(key) of a request is 0, coordinator will return 12100. If hash(key) is 1, coordinator will return 12101 because pos 2 is the closest position to pos 1 in clockwise direction. 
+
+Server:
+We have implemented a simple hash table to store Row(key, value). The hash table has fix size (997), whose data structure is as following:
+typedef struct _Row Row;
+struct _Row
+{
+   char key[128];
+   char value[128];
+   struct _Row *next;
+};
+static Row **hashtable;
+static int size = 997;
+
+The server supports the following commands:
+1. "syncfrom"/"syncto", they are used to transfer data between two servers.
+2. "get"/"set", servers receive requests from clients and return results.
+
+In addition, we have implemented a CLI, which supports 2 commands:
+1. "all", print all data in the server.
+2. "quit", trigger the event of server leaving.
+
+Client:
+First connect to coordinator to get server port number. Then connect to corresponding server doing set and get operation. We have implemented easy-use interface to perform these functions.
+
+
