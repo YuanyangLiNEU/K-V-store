@@ -9,7 +9,7 @@ make
 
 
 Description:
-We use consistent hashing to support the scalability of our key-value store. "Consistent hashing is a special kind of hashing such that when a hash table is resized, only K / n keys need to be remapped on average, where K is the number of keys, and n is the number of slots." In our case, n is the number of servers. Maximum number of servers can be changed in util.h (MAX_SERVER). Details of consitent hashing can be found in http://michaelnielsen.org/blog/consistent-hashing/.
+I use consistent hashing to support the scalability of our key-value store. "Consistent hashing is a special kind of hashing such that when a hash table is resized, only K / n keys need to be remapped on average, where K is the number of keys, and n is the number of slots." In our case, n is the number of servers. Maximum number of servers can be changed in util.h (MAX_SERVER). Details of consitent hashing can be found in http://michaelnielsen.org/blog/consistent-hashing/.
 
 Implementation:
 
@@ -28,7 +28,7 @@ pos: 2, port: 12101
 4. "get"/"set", coordinator will response with server port that clients need connect to. Taking example in #1, if hash(key) of a request is 0, coordinator will return 12100. If hash(key) is 1, coordinator will return 12101 because pos 2 is the closest position to pos 1 in clockwise direction. 
 
 Server:
-We have implemented a simple hash table to store Row(key, value). The hash table has fix size (997), whose data structure is as following:
+I have implemented a simple hash table to store Row(key, value). The hash table has fix size (997), whose data structure is as following:
 typedef struct _Row Row;
 struct _Row
 {
