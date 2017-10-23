@@ -43,11 +43,11 @@ The server supports the following commands:
 1. "syncfrom"/"syncto", they are used to transfer data between two servers.
 2. "get"/"set", servers receive requests from clients and return results.
 
-In addition, we have implemented a CLI, which supports 2 commands:
+In addition, I have implemented a CLI, which supports 2 commands:
 1. "all", print all data in the server.
 2. "quit", trigger the event of server leaving.
 
 Client:
-First connect to coordinator to get server port number. Then connect to corresponding server doing set and get operation. We have implemented easy-use interface to perform these functions.
+First connect to coordinator to get server port number. Then connect to corresponding server doing set and get operation. I have implemented easy-use interface to perform these functions.
 
 
